@@ -15,6 +15,6 @@ plugins {
 rootProject.name = "solid-material"
 
 include(
-    "material-gen",
-    "material-api",
+    "solid-material-gen",
+    "solid-material-api",
 )

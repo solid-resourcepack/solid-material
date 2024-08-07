@@ -14,5 +14,5 @@ dependencies {
     implementation(libs.kotlinPoet)
     implementation(libs.paper)
     implementation(libs.bundles.creative)
-    implementation(project(":material-api"))
+    implementation(project(":solid-material-api"))
 }

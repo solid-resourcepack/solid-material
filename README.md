@@ -35,7 +35,7 @@ val material = SolidBlockMaterial.STONE.toGeneric()
 
 ### Item Materials
 ```kotlin
-val material = SolidBlockMaterial.STICK.toGeneric()
+val material = SolidItemMaterial.STICK.toGeneric()
 ```
 
 ### Material properties

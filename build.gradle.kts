@@ -9,11 +9,12 @@ plugins {
 
 allprojects {
     group = "io.github.solid-resourcepack"
-    version = "1.21"
+    version = "1.21-1.0.1"
 
     repositories {
         mavenCentral()
         google()
+        maven("https://repo.papermc.io/repository/maven-public/")
     }
 
 }

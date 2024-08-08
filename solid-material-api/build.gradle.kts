@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(libs.bundles.creative)
+    compileOnly(libs.paper)
 }
 
 publishing {

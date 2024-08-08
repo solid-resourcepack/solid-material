@@ -1,0 +1,63 @@
+package io.github.solid.resourcepack.material
+
+import kotlin.Lazy
+import net.kyori.adventure.key.Key
+
+public enum class SolidPaintingMaterialTexture(
+  public val key: Lazy<Key>,
+) {
+  ALBAN(lazy { Key.key("minecraft:painting/alban") }),
+  AZTEC(lazy { Key.key("minecraft:painting/aztec") }),
+  AZTEC2(lazy { Key.key("minecraft:painting/aztec2") }),
+  BACK(lazy { Key.key("minecraft:painting/back") }),
+  BACKYARD(lazy { Key.key("minecraft:painting/backyard") }),
+  BAROQUE(lazy { Key.key("minecraft:painting/baroque") }),
+  BOMB(lazy { Key.key("minecraft:painting/bomb") }),
+  BOUQUET(lazy { Key.key("minecraft:painting/bouquet") }),
+  BURNING_SKULL(lazy { Key.key("minecraft:painting/burning_skull") }),
+  BUST(lazy { Key.key("minecraft:painting/bust") }),
+  CAVEBIRD(lazy { Key.key("minecraft:painting/cavebird") }),
+  CHANGING(lazy { Key.key("minecraft:painting/changing") }),
+  COTAN(lazy { Key.key("minecraft:painting/cotan") }),
+  COURBET(lazy { Key.key("minecraft:painting/courbet") }),
+  CREEBET(lazy { Key.key("minecraft:painting/creebet") }),
+  DONKEY_KONG(lazy { Key.key("minecraft:painting/donkey_kong") }),
+  EARTH(lazy { Key.key("minecraft:painting/earth") }),
+  ENDBOSS(lazy { Key.key("minecraft:painting/endboss") }),
+  FERN(lazy { Key.key("minecraft:painting/fern") }),
+  FIGHTERS(lazy { Key.key("minecraft:painting/fighters") }),
+  FINDING(lazy { Key.key("minecraft:painting/finding") }),
+  FIRE(lazy { Key.key("minecraft:painting/fire") }),
+  GRAHAM(lazy { Key.key("minecraft:painting/graham") }),
+  HUMBLE(lazy { Key.key("minecraft:painting/humble") }),
+  KEBAB(lazy { Key.key("minecraft:painting/kebab") }),
+  LOWMIST(lazy { Key.key("minecraft:painting/lowmist") }),
+  MATCH(lazy { Key.key("minecraft:painting/match") }),
+  MEDITATIVE(lazy { Key.key("minecraft:painting/meditative") }),
+  ORB(lazy { Key.key("minecraft:painting/orb") }),
+  OWLEMONS(lazy { Key.key("minecraft:painting/owlemons") }),
+  PASSAGE(lazy { Key.key("minecraft:painting/passage") }),
+  PIGSCENE(lazy { Key.key("minecraft:painting/pigscene") }),
+  PLANT(lazy { Key.key("minecraft:painting/plant") }),
+  POINTER(lazy { Key.key("minecraft:painting/pointer") }),
+  POND(lazy { Key.key("minecraft:painting/pond") }),
+  POOL(lazy { Key.key("minecraft:painting/pool") }),
+  PRAIRIE_RIDE(lazy { Key.key("minecraft:painting/prairie_ride") }),
+  SEA(lazy { Key.key("minecraft:painting/sea") }),
+  SKELETON(lazy { Key.key("minecraft:painting/skeleton") }),
+  SKULL_AND_ROSES(lazy { Key.key("minecraft:painting/skull_and_roses") }),
+  STAGE(lazy { Key.key("minecraft:painting/stage") }),
+  SUNFLOWERS(lazy { Key.key("minecraft:painting/sunflowers") }),
+  SUNSET(lazy { Key.key("minecraft:painting/sunset") }),
+  TIDES(lazy { Key.key("minecraft:painting/tides") }),
+  UNPACKED(lazy { Key.key("minecraft:painting/unpacked") }),
+  VOID(lazy { Key.key("minecraft:painting/void") }),
+  WANDERER(lazy { Key.key("minecraft:painting/wanderer") }),
+  WASTELAND(lazy { Key.key("minecraft:painting/wasteland") }),
+  WATER(lazy { Key.key("minecraft:painting/water") }),
+  WIND(lazy { Key.key("minecraft:painting/wind") }),
+  WITHER(lazy { Key.key("minecraft:painting/wither") }),
+  ;
+
+  public fun toGeneric(): SolidMaterialTexture = SolidMaterialTexture(key.value)
+}

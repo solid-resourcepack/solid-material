@@ -5,6 +5,7 @@ import io.github.solid.resourcepack.material.SolidMaterial
 import io.github.solid.resourcepack.material.SolidMaterialParent
 import io.github.solid.resourcepack.material.SolidMaterialTexture
 import net.kyori.adventure.key.Key
+import org.bukkit.Material
 import team.unnamed.creative.model.Model
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader
 import java.io.File
@@ -15,7 +16,7 @@ import java.io.File
 fun main() {
     val input = File("pack")
     if (!input.exists()) throw NullPointerException("pack was not found")
-    /**input.walk(FileWalkDirection.BOTTOM_UP).forEach {
+    input.walk(FileWalkDirection.BOTTOM_UP).forEach {
         if (it.isDirectory && it.listFiles()?.isEmpty() != false) {
             println("${it.name} is an empty directory")
             it.delete()
@@ -34,7 +35,7 @@ fun main() {
             it.delete()
             return@forEach
         }
-    } */
+    }
     val pack = MinecraftResourcePackReader.builder().lenient(true).build().readFromDirectory(input)
     println(pack.models().size.toString() + " models found")
 
@@ -44,12 +45,31 @@ fun main() {
 
     pack.models().forEach {
         createSolidMaterialEnum(it, materialBuilders)
-        createSolidKeyCollection(it.parent(), parentBuilders, ::createParentBuilder)
+        val textures = mutableListOf<String>()
+        it.textures().variables().map { it.key }.forEach { key ->
+            if (key != null) textures.add(key)
+        }
+
+        it.textures().particle()?.let {
+            textures.add("particle")
+        }
+        it.textures().layers().forEachIndexed { index, modelTexture ->
+            textures.add("layer$index")
+        }
+        createSolidKeyCollection(it.parent(), parentBuilders, ::createParentBuilder,
+            Pair(", lazy { listOf(${
+                textures.joinToString { "\"$it\"" }
+            }) }", arrayOf()))
+
     }
 
     pack.textures().forEach {
         println(it.key())
-        createSolidKeyCollection(Key.key(it.key().key(), it.key().value().replace(".png", "")), textureBuilders, ::createTextureBuilder)
+        createSolidKeyCollection(
+            Key.key(it.key().key(), it.key().value().replace(".png", "")),
+            textureBuilders,
+            ::createTextureBuilder
+        )
     }
 
     parentBuilders.forEach {
@@ -74,10 +94,17 @@ fun main() {
     }
 }
 
-private fun createSolidKeyCollection(nullableKey: Key?, builders: MutableMap<String, TypeSpec.Builder>, builderFun: (String) -> TypeSpec.Builder) {
+private fun createSolidKeyCollection(
+    nullableKey: Key?,
+    builders: MutableMap<String, TypeSpec.Builder>,
+    builderFun: (String) -> TypeSpec.Builder,
+    vararg args: Pair<String, Array<out Any>>
+) {
     nullableKey?.let { key ->
+
         val block = CodeBlock.builder()
         block.add("lazy { %T.key(%S) }", Key::class, key.key())
+        args.forEach { block.add(it.first, it.second) }
         val split = key.value().split("/")
         val type = split.first().replaceFirstChar { it.uppercase() }
         val prefix = split.last().uppercase()
@@ -88,6 +115,7 @@ private fun createSolidKeyCollection(nullableKey: Key?, builders: MutableMap<Str
         )
     }
 }
+
 
 private fun createSolidMaterialEnum(model: Model, builders: MutableMap<String, TypeSpec.Builder>) {
     val parent = model.parent()
@@ -144,11 +172,15 @@ private fun createParentBuilder(type: String): TypeSpec.Builder {
     return TypeSpec.enumBuilder("Solid${type}MaterialParent").primaryConstructor(
         FunSpec.constructorBuilder()
             .addParameter("key", typeNameOf<Lazy<Key>>())
+            .addParameter("textureIds", typeNameOf<Lazy<List<String>>>())
             .build()
     ).addFunction(
         FunSpec.builder("toGeneric").returns(typeNameOf<SolidMaterialParent>())
-            .addCode("return %T(key.value)", typeNameOf<SolidMaterialParent>()).build()
+            .addCode("return %T(key.value, textureIds.value)", typeNameOf<SolidMaterialParent>()).build()
     ).addProperty(PropertySpec.builder("key", typeNameOf<Lazy<Key>>()).initializer("key").build())
+        .addProperty(
+            PropertySpec.builder("textureIds", typeNameOf<Lazy<List<String>>>()).initializer("textureIds").build()
+        )
 }
 
 private fun createTextureBuilder(type: String): TypeSpec.Builder {

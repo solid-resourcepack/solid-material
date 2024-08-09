@@ -9,7 +9,7 @@ plugins {
 
 allprojects {
     group = "io.github.solid-resourcepack"
-    version = "1.21-1.0.2"
+    version = "1.21-1.1.0"
 
     repositories {
         mavenCentral()

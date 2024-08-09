@@ -3,7 +3,8 @@ package io.github.solid.resourcepack.material
 import net.kyori.adventure.key.Key
 
 data class SolidMaterialParent(
-    val key: Key
+    val key: Key,
+    val textureIds: List<String>
 ) {
     companion object {
         fun exists(key: Key): Boolean {

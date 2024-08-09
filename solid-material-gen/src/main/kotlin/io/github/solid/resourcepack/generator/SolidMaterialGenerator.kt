@@ -3,8 +3,8 @@ package io.github.solid.resourcepack.generator
 import com.squareup.kotlinpoet.*
 import io.github.solid.resourcepack.material.SolidMaterial
 import io.github.solid.resourcepack.material.SolidMaterialParent
+import io.github.solid.resourcepack.material.SolidMaterialTexture
 import net.kyori.adventure.key.Key
-import org.bukkit.Material
 import team.unnamed.creative.model.Model
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader
 import java.io.File
@@ -15,7 +15,7 @@ import java.io.File
 fun main() {
     val input = File("pack")
     if (!input.exists()) throw NullPointerException("pack was not found")
-    input.walk(FileWalkDirection.BOTTOM_UP).forEach {
+    /**input.walk(FileWalkDirection.BOTTOM_UP).forEach {
         if (it.isDirectory && it.listFiles()?.isEmpty() != false) {
             println("${it.name} is an empty directory")
             it.delete()
@@ -34,16 +34,22 @@ fun main() {
             it.delete()
             return@forEach
         }
-    }
+    } */
     val pack = MinecraftResourcePackReader.builder().lenient(true).build().readFromDirectory(input)
     println(pack.models().size.toString() + " models found")
 
     val materialBuilders = mutableMapOf<String, TypeSpec.Builder>()
     val parentBuilders = mutableMapOf<String, TypeSpec.Builder>()
+    val textureBuilders = mutableMapOf<String, TypeSpec.Builder>()
 
     pack.models().forEach {
         createSolidMaterialEnum(it, materialBuilders)
-        createSolidMaterialParent(it.parent(), parentBuilders)
+        createSolidKeyCollection(it.parent(), parentBuilders, ::createParentBuilder)
+    }
+
+    pack.textures().forEach {
+        println(it.key())
+        createSolidKeyCollection(Key.key(it.key().key(), it.key().value().replace(".png", "")), textureBuilders, ::createTextureBuilder)
     }
 
     parentBuilders.forEach {
@@ -59,16 +65,23 @@ fun main() {
         )
         file.build().writeTo(File("solid-material-api/src/main/kotlin"))
     }
+
+    textureBuilders.forEach {
+        FileSpec.builder("io.github.solid.resourcepack.material", "Solid${it.key}MaterialTexture").addType(
+            it.value.build()
+        ).build().writeTo(File("solid-material-api/src/main/kotlin"))
+
+    }
 }
 
-private fun createSolidMaterialParent(parentKey: Key?, builders: MutableMap<String, TypeSpec.Builder>) {
-    parentKey?.let { parent ->
+private fun createSolidKeyCollection(nullableKey: Key?, builders: MutableMap<String, TypeSpec.Builder>, builderFun: (String) -> TypeSpec.Builder) {
+    nullableKey?.let { key ->
         val block = CodeBlock.builder()
-        block.add("lazy { %T.key(%S) }", Key::class, parent.key())
-        val split = parent.value().split("/")
+        block.add("lazy { %T.key(%S) }", Key::class, key.key())
+        val split = key.value().split("/")
         val type = split.first().replaceFirstChar { it.uppercase() }
         val prefix = split.last().uppercase()
-        val builder = builders.getOrPut(type) { createParentBuilder(type) }
+        val builder = builders.getOrPut(type) { builderFun(type) }
         builder.addEnumConstant(
             prefix, TypeSpec.anonymousClassBuilder()
                 .addSuperclassConstructorParameter(block.build()).build()
@@ -132,5 +145,19 @@ private fun createParentBuilder(type: String): TypeSpec.Builder {
         FunSpec.constructorBuilder()
             .addParameter("key", typeNameOf<Lazy<Key>>())
             .build()
-    ).addFunction(FunSpec.builder("toGeneric").returns(typeNameOf<SolidMaterialParent>()).addCode("return %T(key.value)", typeNameOf<SolidMaterialParent>()).build()).addProperty(PropertySpec.builder("key", typeNameOf<Lazy<Key>>()).initializer("key").build())
+    ).addFunction(
+        FunSpec.builder("toGeneric").returns(typeNameOf<SolidMaterialParent>())
+            .addCode("return %T(key.value)", typeNameOf<SolidMaterialParent>()).build()
+    ).addProperty(PropertySpec.builder("key", typeNameOf<Lazy<Key>>()).initializer("key").build())
+}
+
+private fun createTextureBuilder(type: String): TypeSpec.Builder {
+    return TypeSpec.enumBuilder("Solid${type}MaterialTexture").primaryConstructor(
+        FunSpec.constructorBuilder()
+            .addParameter("key", typeNameOf<Lazy<Key>>())
+            .build()
+    ).addFunction(
+        FunSpec.builder("toGeneric").returns(typeNameOf<SolidMaterialTexture>())
+            .addCode("return %T(key.value)", typeNameOf<SolidMaterialTexture>()).build()
+    ).addProperty(PropertySpec.builder("key", typeNameOf<Lazy<Key>>()).initializer("key").build())
 }

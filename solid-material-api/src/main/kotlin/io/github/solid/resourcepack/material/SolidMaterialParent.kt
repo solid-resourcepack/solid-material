@@ -8,30 +8,33 @@ data class SolidMaterialParent(
 ) {
     companion object {
         fun exists(key: Key): Boolean {
-            if (key.namespace() != Key.MINECRAFT_NAMESPACE) return false
+            return get(key) != null
+        }
+        fun get(key: Key): SolidMaterialParent? {
+            if (key.namespace() != Key.MINECRAFT_NAMESPACE) return null
             val split = key.value().split("/")
             val type = split.first().uppercase()
             val value = split.last().uppercase()
             return when (type) {
                 "BLOCK" -> try {
-                    SolidBlockMaterialParent.valueOf(value); true
+                    SolidBlockMaterialParent.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "ITEM" -> try {
-                    SolidItemMaterialParent.valueOf(value); true
+                    SolidItemMaterialParent.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "BUILTIN" -> try {
-                    SolidBuiltinMaterialParent.valueOf(value); true
+                    SolidBuiltinMaterialParent.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
-                else -> false
+                else -> null
             }
         }
     }

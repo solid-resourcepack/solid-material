@@ -6,103 +6,107 @@ data class SolidMaterialTexture(
     val key: Key
 ) {
     companion object {
+
         fun exists(key: Key): Boolean {
-            if (key.namespace() != Key.MINECRAFT_NAMESPACE) return false
+            return get(key) != null
+        }
+        fun get(key: Key): SolidMaterialTexture? {
+            if (key.namespace() != Key.MINECRAFT_NAMESPACE) return null
             val split = key.value().split("/")
             val type = split.first().uppercase()
             val value = split.last().uppercase()
             return when (type) {
                 "BLOCK" -> try {
-                    SolidBlockMaterialTexture.valueOf(value); true
+                    SolidBlockMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "ITEM" -> try {
-                    SolidItemMaterialTexture.valueOf(value); true
+                    SolidItemMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "MODELS" -> try {
-                    SolidModelsMaterialTexture.valueOf(value); true
+                    SolidModelsMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "GUI" -> try {
-                    SolidGuiMaterialTexture.valueOf(value); true
+                    SolidGuiMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "ENTITY" -> try {
-                    SolidEntityMaterialTexture.valueOf(value); true
+                    SolidEntityMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "PARTICLE" -> try {
-                    SolidParticleMaterialTexture.valueOf(value); true
+                    SolidParticleMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "ENVIRONMENT" -> try {
-                    SolidEnvironmentMaterialTexture.valueOf(value); true
+                    SolidEnvironmentMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "MISC" -> try {
-                    SolidMiscMaterialTexture.valueOf(value); true
+                    SolidMiscMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "PAINTING" -> try {
-                    SolidPaintingMaterialTexture.valueOf(value); true
+                    SolidPaintingMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "FONT" -> try {
-                    SolidFontMaterialTexture.valueOf(value); true
+                    SolidFontMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "MAP" -> try {
-                    SolidMapMaterialTexture.valueOf(value); true
+                    SolidMapMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "COLORMAP" -> try {
-                    SolidColormapMaterialTexture.valueOf(value); true
+                    SolidColormapMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "EFFECT" -> try {
-                    SolidEffectMaterialTexture.valueOf(value); true
+                    SolidEffectMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "TRIMS" -> try {
-                    SolidTrimsMaterialTexture.valueOf(value); true
+                    SolidTrimsMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
                 "MOB_EFFECT" -> try {
-                    SolidMobEffectMaterialTexture.valueOf(value); true
+                    SolidMobEffectMaterialTexture.valueOf(value).toGeneric()
                 } catch (ignored: Exception) {
-                    false
+                    null
                 }
 
-                else -> false
+                else -> null
             }
         }
     }
